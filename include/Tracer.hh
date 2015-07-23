@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <iostream>
+#include <cmath>
+
 #include "../include/Pendulum.hh"
 
 class Pendulum;
@@ -14,12 +17,16 @@ private:
   sf::CircleShape circletracer;
   std::vector<sf::CircleShape> trace;
   std::vector<sf::CircleShape>::iterator it;
+  sf::Color tracercolor;
+  float life;
+  sf::Time time;
 
 public:
   Tracer(float,float);
   ~Tracer() {};
   void draw(sf::RenderTarget&, sf::RenderStates) const;
   void setPos(Pendulum*);
+  void dissolve(Pendulum*);
 
 };
 #endif

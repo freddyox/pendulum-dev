@@ -19,29 +19,39 @@ int main() {
   sf::RenderWindow window(sf::VideoMode(gDisplayx,gDisplayy), "Simulation");
   window.setFramerateLimit(60);
 
+  // Initializing
   Pendulum pendulum( window.getSize().x, window.getSize().y );
   Tracer tracer( window.getSize().x, window.getSize().y );
 
+  // Handling Time
+  float t = 0.0;
+  float dt = 1.0/60.0;
+ 
   while( window.isOpen() ) {
-    sf::Event event;
-    while( window.pollEvent(event) ) {
-      if( event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) ) {
-	window.close();
+      sf::Event event;
+      while( window.pollEvent(event) ) {
+	if( event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) ) {
+	  window.close();
+	}
       }
-    }
+      // UPDATING
+      pendulum.updatePendulum(t);
+
+      tracer.setPos(&pendulum);
+      tracer.dissolve(&pendulum);
+      // DRAWINGS
+      window.clear();
+
+      // Pendulum    
+      window.draw( pendulum );
     
-    window.clear();
-    
-    // Pendulum
-    pendulum.updatePendulum();
-    window.draw( pendulum );
+      // Tracers
+      window.draw(tracer);
 
-    // Tracers
-    tracer.setPos(&pendulum);
-    window.draw(tracer);
+      window.display();   
 
-
-    window.display();    
+      t+=dt;
+ 
   }
   return 0;
 }

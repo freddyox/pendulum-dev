@@ -1,19 +1,15 @@
 #include "../include/Tracer.hh"
-#include <iostream>
 
 Tracer::Tracer(float displayx, float displayy) {
   mscreenwidth = displayx;
   mscreenheight = displayy;
-
-  float radius = 6.0;
+  life = 3.0;
+  float radius(1.0);
+  sf::Color tracercolor = sf::Color::Red;
   circletracer.setRadius(radius);
   sf::FloatRect originRect = circletracer.getLocalBounds();
   circletracer.setOrigin( (originRect.width)/2.0, (originRect.height)/2.0 );
-  circletracer.setFillColor( sf::Color::Red );
-
-  for(int i=0; i<100; i++) {
-    trace.push_back( circletracer );
-  }
+  circletracer.setFillColor( tracercolor );
 }
 
 void Tracer::draw( sf::RenderTarget& target, sf::RenderStates ) const {
@@ -25,7 +21,25 @@ void Tracer::draw( sf::RenderTarget& target, sf::RenderStates ) const {
 
 void Tracer::setPos(Pendulum* ptr) {
   sf::Vector2f x_knot = ptr->getPendulumPosition();
-  for( it=trace.begin(); it != trace.end(); it++ ) {
-    (*it).setPosition(x_knot);
+  circletracer.setPosition( x_knot );
+  trace.push_back( circletracer );
+}
+
+void Tracer::dissolve(Pendulum* ptr) {
+  sf::Clock timer;
+  time+=timer.getElapsedTime();
+  float life = time.asSeconds();
+  sf::Vector2f temp = ptr->getPendulumPosition();
+  for( it=trace.begin(); it != trace.end(); it++) {
+    sf::Vector2f tracerposition = (*it).getPosition();
+    sf::Vector2f distanceVec = temp - tracerposition;
+    float distance = sqrt( pow(distanceVec.x,2) + pow(distanceVec.y,2) );
+    float ratio = 255/(0.2*distance);
+    tracercolor = sf::Color(255,0,0,ratio);
+    (*it).setFillColor( tracercolor );
+    if( ratio < 10 || life >0.00001) {
+	trace.erase(it);
+	life = 0;
+    }
   }
 }

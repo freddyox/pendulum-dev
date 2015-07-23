@@ -2,29 +2,36 @@
 #define PENDULUM_HH
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
 class Pendulum : public sf::Drawable, public sf::Transformable
 {
 private:
-sf::Vector2f pendulumSize;
-float width,height;
-float mscreenwidth, mscreenheight;
-sf::Color pendulumColor;
-sf::RectangleShape pendulum;
-sf::CircleShape origin;
-float theta_knot;
-float omega;
-float gravity;
-float theta;
-float theta_dot;
-float t;
+  sf::Vector2f pendulumSize;
+  float width,height;
+  float mscreenwidth, mscreenheight;
+  sf::Color pendulumColor;
+  sf::RectangleShape pendulum;
+  sf::CircleShape origin,bottom;
+  float theta_knot;
+  float omega;
+  float gravity;
+  float drag;
+  float theta;
+  float theta_dot;
+  float timer;
 
+  //RK4
+  float omega_knot;
 public:
-Pendulum(float,float);
-~Pendulum() {};
-void draw(sf::RenderTarget&, sf::RenderStates) const;
-sf::Vector2f getpendulumSize() { return pendulumSize; }
-void updatePendulum();
-sf::Vector2f getPendulumPosition();
+  Pendulum(float,float);
+  ~Pendulum() {};
+  void draw(sf::RenderTarget&, sf::RenderStates) const;
+  sf::Vector2f getpendulumSize() { return pendulumSize; }
+  void updatePendulum(float);
+  void updatePendulumRK4(float,float);
+  void chooseMethod(float,float);
+  void addDrag(float);
+  sf::Vector2f getPendulumPosition();
 };
 #endif
