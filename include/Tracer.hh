@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cmath>
 
+
 #include "../include/Pendulum.hh"
 
 class Pendulum;
@@ -19,7 +20,15 @@ private:
   std::vector<sf::CircleShape>::iterator it;
   sf::Color tracercolor;
   float life;
-  sf::Time time;
+  sf::Time sftime;
+
+  sf::Color red;
+  sf::Color blue;
+  sf::Color green;
+  sf::Color indigo;
+  sf::Color yellow;
+  sf::Color orange;
+  sf::Color violet;
 
 public:
   Tracer(float,float);

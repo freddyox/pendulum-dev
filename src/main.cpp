@@ -36,6 +36,7 @@ int main() {
       }
       // UPDATING
       pendulum.updatePendulum(t);
+      //pendulum.updatePendulumRK4(t,10.0);
 
       tracer.setPos(&pendulum);
       tracer.dissolve(&pendulum);

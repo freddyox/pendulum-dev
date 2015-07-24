@@ -37,7 +37,10 @@ Pendulum::Pendulum(float displayx, float displayy) {
   theta_dot = 0.0;
   gravity = 9.8; // m/s^s
   omega = sqrt( gravity/(height/2.0) ); 
-  omega_knot = 0.0;
+
+  // RK4
+  u1_knot = theta_knot;
+  u2_knot = 0.0;
 }
 
 void Pendulum::draw( sf::RenderTarget& target, sf::RenderStates) const {
@@ -53,15 +56,27 @@ void Pendulum::updatePendulum(float time) {
   pendulum.setRotation(theta);
 }
 
-void Pendulum::updatePendulumRK4(float time, float h) {
+void Pendulum::updatePendulumRK4(float time, float g) {
   timer = time;
-  // k refers to theta_dot = omega
-  // l refers to omega_dot = -w^2*sin(theta)
-//   float k0 = omega_knot;
-//   float l0 = -omega_knot*omega_knot*sin(theta_knot);
-//   float k1 = omega_knot+l0/2.0;
-//   float l1 = -omega_knot*omegaknot*
-// float k1 = 
+  float h = 1/g;
+  // k,l refers to (d/dt)(u1,u2) = (u2, -u2^2*sin(u1) )
+  // step size at end of calculation
+  float k0 = u2_knot;
+  float l0 = -pow(u2_knot,2)*sin( u2_knot*time );
+  
+  float k1 = u2_knot + 0.5*l0;
+  float l1 = -pow(u2_knot+0.5*l0,2)*sin( (u2_knot+0.5*l0)*(time+0.5*h) );
+
+  float k2 = u2_knot + 0.5*l1;
+  float l2 = -pow(u2_knot+0.5*l1,2)*sin( (u2_knot+0.5*l1)*(time+0.5*h) );
+
+  float k3 = u2_knot + l2;
+  float l3 = -pow(u2_knot+l2,2)*sin( (u2_knot+l2)*(time+h) );
+  
+  float u1_plus_one = u1_knot + (h/6.0)*( k0 + 2*k1 + 2*k2 + k3);
+  float u2_plus_one = u2_knot + (h/6.0)*( l0 + 2*l1 + 2*l2 + l3);
+
+  pendulum.setRotation( u1_plus_one );
 
 
 }
@@ -74,11 +89,12 @@ void Pendulum::chooseMethod(float time, float h) {
 }
 
 void Pendulum::addDrag(float time) {
+  ;
 }
 
 sf::Vector2f Pendulum::getPendulumPosition() {
   sf::Vector2f temp( -height*sin(theta/60.0), height*cos(theta/60.0) );
   sf::Vector2f origin2pendulum( mscreenwidth/2.0, mscreenheight/2.0 - height/2.0 );
   bottom.setPosition( temp+origin2pendulum );
-  return temp+origin2pendulum;
+  return temp + origin2pendulum;
 }
