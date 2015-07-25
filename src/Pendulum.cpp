@@ -57,8 +57,8 @@ void Pendulum::updatePendulum(float time) {
 }
 
 void Pendulum::updatePendulumRK4(float time, float g) {
-  timer = time;
-  float h = 1/g;
+  timer = time;  
+  float h = 1/g; // step size
   // k,l refers to (d/dt)(u1,u2) = (u2, -u2^2*sin(u1) )
   // step size at end of calculation
   float k0 = u2_knot;
