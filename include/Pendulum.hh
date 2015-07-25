@@ -22,7 +22,7 @@ private:
   float timer;
 
   //RK4
-  float u1_knot, u2_knot;
+  float u1_knot, u2_knot, u1_nth, u2_nth;
 public:
   Pendulum(float,float);
   ~Pendulum() {};
