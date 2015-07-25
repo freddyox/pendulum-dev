@@ -41,6 +41,10 @@ Pendulum::Pendulum(float displayx, float displayy) {
   // RK4
   u1_knot = theta_knot;
   u2_knot = 0.0;
+
+  //Initialize RK4
+  u1_nth=u1_knot;
+  u2_nth=U2_knot;
 }
 
 void Pendulum::draw( sf::RenderTarget& target, sf::RenderStates) const {
@@ -61,23 +65,47 @@ void Pendulum::updatePendulumRK4(float time, float g) {
   float h = 1/g; // step size
   // k,l refers to (d/dt)(u1,u2) = (u2, -u2^2*sin(u1) )
   // step size at end of calculation
-  float k0 = u2_knot;
-  float l0 = -pow(u2_knot,2)*sin( u2_knot*time );
+ 
+
+  float l0= -pow(omega,2)*sin(u1_nth);
+  float l1= -pow(omega,2)*sin(u1_nth+h*0.5*l0);
+  float l2= -pow(omega,2)*sin(u1_nth+h*0.5*l1);
+  float l3= -pow(omega,2)*sin(u1_nth+h*0.5*l2);
   
-  float k1 = u2_knot + 0.5*l0;
-  float l1 = -pow(u2_knot+0.5*l0,2)*sin( (u2_knot+0.5*l0)*(time+0.5*h) );
+  float u2soln= u2_nth+(h/6)*(l0+2*l1+2*l2+l3);
 
-  float k2 = u2_knot + 0.5*l1;
-  float l2 = -pow(u2_knot+0.5*l1,2)*sin( (u2_knot+0.5*l1)*(time+0.5*h) );
+  float k0= u2_nth;
+  float k1= u2_nth+h*0.5*k0;
+  float k2= u2_nth+h*0.5*k1;
+  float k3= u2_nth+h*0.5*k2;
 
-  float k3 = u2_knot + l2;
-  float l3 = -pow(u2_knot+l2,2)*sin( (u2_knot+l2)*(time+h) );
+  float u1soln= u1_nth+(h/6)*(k0+2*k1+2*k2+k3);
+
+  u1_nth=u1soln;
+  u2_nth=u2soln;
+
+
+
+  // float k0 = u2_nth;
   
-  float u1_plus_one = u1_knot + (h/6.0)*( k0 + 2*k1 + 2*k2 + k3);
-  float u2_plus_one = u2_knot + (h/6.0)*( l0 + 2*l1 + 2*l2 + l3);
+  //float l0 = -pow(u2_knot,2)*sin( u2_knot*time );
+  
+  // float k1 = u2_nth + 0.5*l0;
+  // float l1 = -pow(u2_knot+0.5*l0,2)*sin( (u2_knot+0.5*l0)*(time+0.5*h) );
 
-  pendulum.setRotation( u1_plus_one );
+  // float k2 = u2_knot + 0.5*l1;
+  // float l2 = -pow(u2_knot+0.5*l1,2)*sin( (u2_knot+0.5*l1)*(time+0.5*h) );
 
+  // float k3 = u2_knot + l2;
+  // float l3 = -pow(u2_knot+l2,2)*sin( (u2_knot+l2)*(time+h) );
+  
+  // float u1_plus_one = u1_knot + (h/6.0)*( k0 + 2*k1 + 2*k2 + k3);
+  // float u2_plus_one = u2_knot + (h/6.0)*( l0 + 2*l1 + 2*l2 + l3);
+
+  // u2_knot = u2_plus_one;
+  //  pendulum.setRotation( u1_plus_one );
+
+pendulum.setRotation( u1_nth );
 
 }
 
