@@ -20,7 +20,6 @@ Tracer::Tracer(float displayx, float displayy) {
   circletracer.setRadius(radius);
   sf::FloatRect originRect = circletracer.getLocalBounds();
   circletracer.setOrigin( (originRect.width)/2.0, (originRect.height)/2.0 );
-
   circletracer.setFillColor( tracercolor );
 }
 
@@ -41,36 +40,40 @@ void Tracer::dissolve(Pendulum* ptr) {
   srand(time(NULL));
 
   sf::Clock timer;
-  sftime+=timer.getElapsedTime();
+  sftime += timer.getElapsedTime();
   float life = sftime.asSeconds();
   sf::Vector2f temp = ptr->getPendulumPosition();
+
   for( it=trace.begin(); it != trace.end(); it++) {
     sf::Vector2f tracerposition = (*it).getPosition();
     sf::Vector2f distanceVec = temp - tracerposition;
     float distance = sqrt( pow(distanceVec.x,2) + pow(distanceVec.y,2) );
     float ratio = 255/(0.1*distance);
 
-    tracercolor = sf::Color(rand()%255,rand()%255,rand()%255,ratio);
+    tracercolor = sf::Color(255,rand()%255,rand()%255,ratio);
     (*it).setFillColor( tracercolor );
-    // if( life > 0.00001 )
-    //   (*it).setFillColor( red );
-    // else if(  life > 0.00002 )
+
+    // if( ratio > 200.0 ) {
+
+    // 	tracercolor = sf::Color::Red;
+    // 	(*it).setFillColor( tracercolor );
+    // }
+    // else if( ratio > 850.0 )
     //   (*it).setFillColor( orange );
-    // else if(  life > 0.00003 )
+    // else if( ratio > 750.0 )
     //   (*it).setFillColor( yellow );
-    // else if(  life > 0.00004  )
+    // else if( ratio > 650.0 )
     //   (*it).setFillColor( green );
-    // else if(  life > 0.00005  )
+    // else if( ratio > 550.0 )
     //   (*it).setFillColor( blue );
-    // else if(  life > 0.00006  )
+    // else if( ratio > 450.0 )
     //   (*it).setFillColor( indigo );
-    // else if(  life > 0.00007  )
+    // else if( ratio > 10.0 )
     //   (*it).setFillColor( violet );
 
-
-    if( ratio < 10 || life > 0.00003) {
-	trace.erase(it);
-	life = 0;
+    if(life > 0.00003) {
+      trace.erase(it);
+      life = 0;
     }
   }
 }

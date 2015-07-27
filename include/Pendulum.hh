@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
+#include <string>
 
 class Pendulum : public sf::Drawable, public sf::Transformable
 {
@@ -20,6 +21,7 @@ private:
   float theta;
   float theta_dot;
   float timer;
+  float conv,tracerang;
 
   //RK4
   float u1_knot, u2_knot, u1_nth, u2_nth;
@@ -33,5 +35,7 @@ public:
   void chooseMethod(float,float);
   void addDrag(float);
   sf::Vector2f getPendulumPosition();
+  std::string getThetaKnotString();
+  float getThetaKnot() {return theta_knot;} 
 };
 #endif
