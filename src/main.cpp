@@ -24,8 +24,8 @@ int main() {
   Tracer tracer( window.getSize().x, window.getSize().y );
 
   // Handling Time
-  float t = 0.0;
-  float dt = 1.0/60.0;
+  double t = 0.0;
+  double dt = 1.0/60.0;
 
   // Add a Title:
   sf::Font font;
@@ -84,7 +84,7 @@ int main() {
       }
       // UPDATING
 
-      pendulum.chooseMethod(t,80.0);
+      pendulum.chooseMethod(t,1000.0);
 
       tracer.setPos(&pendulum);
       tracer.dissolve(&pendulum);

@@ -50,26 +50,8 @@ void Tracer::dissolve(Pendulum* ptr) {
     float distance = sqrt( pow(distanceVec.x,2) + pow(distanceVec.y,2) );
     float ratio = 255/(0.1*distance);
 
-    tracercolor = sf::Color(255,rand()%255,rand()%255,ratio);
+    tracercolor = sf::Color(255,0,0,ratio);
     (*it).setFillColor( tracercolor );
-
-    // if( ratio > 200.0 ) {
-
-    // 	tracercolor = sf::Color::Red;
-    // 	(*it).setFillColor( tracercolor );
-    // }
-    // else if( ratio > 850.0 )
-    //   (*it).setFillColor( orange );
-    // else if( ratio > 750.0 )
-    //   (*it).setFillColor( yellow );
-    // else if( ratio > 650.0 )
-    //   (*it).setFillColor( green );
-    // else if( ratio > 550.0 )
-    //   (*it).setFillColor( blue );
-    // else if( ratio > 450.0 )
-    //   (*it).setFillColor( indigo );
-    // else if( ratio > 10.0 )
-    //   (*it).setFillColor( violet );
 
     if(life > 0.00003) {
       trace.erase(it);

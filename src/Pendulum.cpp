@@ -4,6 +4,7 @@
 #include <time.h>
 #include <cmath>
 #include <sstream>
+#include <iostream>
 
 Pendulum::Pendulum(float displayx, float displayy) {
   mscreenwidth = displayx;
@@ -38,7 +39,8 @@ Pendulum::Pendulum(float displayx, float displayy) {
   theta = theta_knot;
   theta_dot = 0.0;
   gravity = 9.8;                     // m/s^s
-  omega = sqrt( gravity / height);   // rad/s
+  omega = 10; //sqrt( gravity / height );   // rad/s
+  period = 2.0*3.141592 / omega;
 
   // RK4 (need radians)
   u1_knot = theta_knot * conv;
@@ -47,6 +49,8 @@ Pendulum::Pendulum(float displayx, float displayy) {
   //Initialize RK4
   u1_nth=u1_knot;
   u2_nth=u2_knot;
+
+  count = 0;
 }
 
 void Pendulum::draw( sf::RenderTarget& target, sf::RenderStates) const {
@@ -55,7 +59,7 @@ void Pendulum::draw( sf::RenderTarget& target, sf::RenderStates) const {
   target.draw( bottom );
 }
 
-void Pendulum::updatePendulum(float time) {
+void Pendulum::updatePendulum(double time) {
   timer = time;
   theta = theta_knot*cos( omega*time );
   theta_dot = -omega*theta_knot*sin( omega*time );
@@ -63,43 +67,45 @@ void Pendulum::updatePendulum(float time) {
   pendulum.setRotation(theta);
 }
 
-void Pendulum::updatePendulumRK4(float time, float g) {
+void Pendulum::updatePendulumRK4(double time, double g) {
   timer = time;  
-  float h = 1/g; // step size
-  // k,l refers to (d/dt)(u1,u2) = (u2, -u2^2*sin(u1) )
-  // step size at end of calculation
+  count++;
+  if( count % 20 ) {
+    double h = 1/g; // step size
+    // k,l refers to (d/dt)(u1,u2) = (u2, -u2^2*sin(u1) )
+    // step size at end of calculation
 
-  float l0= -pow(omega,2)*sin(u1_nth);
-  float l1= -pow(omega,2)*sin(u1_nth+h*0.5*l0);
-  float l2= -pow(omega,2)*sin(u1_nth+h*0.5*l1);
-  float l3= -pow(omega,2)*sin(u1_nth+h*0.5*l2);
+    double l0= -pow(omega,2)*sin(u1_nth);
+    double l1= -pow(omega,2)*sin(u1_nth+h*0.5*l0);
+    double l2= -pow(omega,2)*sin(u1_nth+h*0.5*l1);
+    double l3= -pow(omega,2)*sin(u1_nth+h*0.5*l2);
   
-  float u2soln= u2_nth+(h/6)*(l0+2*l1+2*l2+l3);
+    double u2soln= u2_nth+(h/6)*(l0+2*l1+2*l2+l3);
 
-  float k0= u2_nth;
-  float k1= u2_nth+h*0.5*k0;
-  float k2= u2_nth+h*0.5*k1;
-  float k3= u2_nth+h*0.5*k2;
+    double k0= u2_nth;
+    double k1= u2_nth+h*0.5*k0;
+    double k2= u2_nth+h*0.5*k1;
+    double k3= u2_nth+h*0.5*k2;
 
-  float u1soln= u1_nth+(h/6)*(k0+2*k1+2*k2+k3);
+    double u1soln= u1_nth+(h/6)*(k0+2*k1+2*k2+k3);
 
-  u1_nth=u1soln;
-  u2_nth=u2soln;
+    u1_nth=u1soln;
+    u2_nth=u2soln;
 
-  tracerang = u1_nth;
-  pendulum.setRotation( u1_nth / conv );
-
+    tracerang = u1_nth;
+    pendulum.setRotation( u1_nth / conv );
+  }
 }
 
 // If sin(theta) ~ theta, then small angle approx is sufficient, else RK4
-void Pendulum::chooseMethod(float time, float h) {
+void Pendulum::chooseMethod(double time, double h) {
   if( theta_knot < 10.0 )
     updatePendulum(time);
   else
     updatePendulumRK4(time,h);
 }
 
-void Pendulum::addDrag(float time) {
+void Pendulum::addDrag(double time) {
   ;
 }
 

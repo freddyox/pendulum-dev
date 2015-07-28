@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include <string>
+#include <fstream>
 
 class Pendulum : public sf::Drawable, public sf::Transformable
 {
@@ -14,28 +15,30 @@ private:
   sf::Color pendulumColor;
   sf::RectangleShape pendulum;
   sf::CircleShape origin,bottom;
-  float theta_knot;
-  float omega;
-  float gravity;
-  float drag;
-  float theta;
-  float theta_dot;
-  float timer;
-  float conv,tracerang;
+  double theta_knot;
+  double omega;
+  double gravity;
+  double drag;
+  double theta;
+  double theta_dot;
+  double timer;
+  double conv,tracerang;
+  double period;
+  int count;
 
   //RK4
-  float u1_knot, u2_knot, u1_nth, u2_nth;
+  double u1_knot, u2_knot, u1_nth, u2_nth;
 public:
   Pendulum(float,float);
   ~Pendulum() {};
   void draw(sf::RenderTarget&, sf::RenderStates) const;
   sf::Vector2f getpendulumSize() { return pendulumSize; }
-  void updatePendulum(float);
-  void updatePendulumRK4(float,float);
-  void chooseMethod(float,float);
-  void addDrag(float);
+  void updatePendulum(double);
+  void updatePendulumRK4(double,double);
+  void chooseMethod(double,double);
+  void addDrag(double);
   sf::Vector2f getPendulumPosition();
   std::string getThetaKnotString();
-  float getThetaKnot() {return theta_knot;} 
+  double getThetaKnot() {return theta_knot;}
 };
 #endif
